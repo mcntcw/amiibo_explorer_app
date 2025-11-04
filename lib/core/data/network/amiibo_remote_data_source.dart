@@ -1,14 +1,15 @@
-import 'dart:convert'; // jsonDecode when Dio returns String [web:1]
+import 'dart:convert';
 import 'package:amiibo_explorer_app/core/data/amiibo_dto.dart';
 import 'package:amiibo_explorer_app/core/domain/amiibo_repository.dart';
-import 'package:dio/dio.dart'; // Dio HTTP client [web:125]
-import 'package:amiibo_explorer_app/core/domain/amiibo.dart'; // Your domain model
+import 'package:dio/dio.dart';
+import 'package:amiibo_explorer_app/core/domain/amiibo.dart';
 
 /// Remote data source backed by AmiiboAPI.
 /// - Search uses /api/amiibo/?name={query}
 /// - Get-by-id uses /api/amiibo/?id={head}{tail}
 class AmiiboRemoteDataSource implements AmiiboRepository {
   final Dio _dio;
+  // ignore: unused_field
   final String _baseUrl;
 
   AmiiboRemoteDataSource({
