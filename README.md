@@ -1,285 +1,61 @@
-# amiibo_explorer_app
+# Amiibo Explorer App
 
-Amiibo Explorer
+A Flutter application that allows users to explore, search, and view data related to Amiibo characters.
+
+---
+
+## Overview
+
+Amiibo Explorer is a cross-platform Flutter app that uses modern libraries and patterns such as BLoC for state management and Dio for network requests.  
+It features custom fonts, animations, and a structured architecture designed for scalability.
+
+---
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+### 1. Prerequisites
 
-A few resources to get you started if this is your first Flutter project:
+Before running the application, make sure you have installed:
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+- Flutter SDK (version 3.9.2 or higher)
+- Dart SDK (included with Flutter)
+- Android Studio / Xcode (for emulator/simulator support)
+- A device or emulator configured properly
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+To check your Flutter setup, run: 
+flutter doctor
 
-```
-amiibo_explorer_app
-├─ .metadata
-├─ README.md
-├─ analysis_options.yaml
-├─ android
-│  ├─ .gradle
-│  │  ├─ 8.12
-│  │  │  ├─ checksums
-│  │  │  │  ├─ md5-checksums.bin
-│  │  │  │  └─ sha1-checksums.bin
-│  │  │  ├─ expanded
-│  │  │  ├─ fileChanges
-│  │  │  ├─ fileHashes
-│  │  │  │  ├─ fileHashes.bin
-│  │  │  │  └─ resourceHashesCache.bin
-│  │  │  └─ vcsMetadata
-│  │  ├─ buildOutputCleanup
-│  │  │  └─ cache.properties
-│  │  ├─ noVersion
-│  │  └─ vcs-1
-│  ├─ app
-│  │  ├─ build.gradle.kts
-│  │  └─ src
-│  │     ├─ debug
-│  │     │  └─ AndroidManifest.xml
-│  │     ├─ main
-│  │     │  ├─ AndroidManifest.xml
-│  │     │  ├─ java
-│  │     │  │  └─ io
-│  │     │  │     └─ flutter
-│  │     │  │        └─ plugins
-│  │     │  │           └─ GeneratedPluginRegistrant.java
-│  │     │  ├─ kotlin
-│  │     │  │  └─ com
-│  │     │  │     └─ example
-│  │     │  │        └─ amiibo_explorer_app
-│  │     │  │           └─ MainActivity.kt
-│  │     │  └─ res
-│  │     │     ├─ drawable
-│  │     │     │  └─ launch_background.xml
-│  │     │     ├─ drawable-v21
-│  │     │     │  └─ launch_background.xml
-│  │     │     ├─ mipmap-hdpi
-│  │     │     │  └─ ic_launcher.png
-│  │     │     ├─ mipmap-mdpi
-│  │     │     │  └─ ic_launcher.png
-│  │     │     ├─ mipmap-xhdpi
-│  │     │     │  └─ ic_launcher.png
-│  │     │     ├─ mipmap-xxhdpi
-│  │     │     │  └─ ic_launcher.png
-│  │     │     ├─ mipmap-xxxhdpi
-│  │     │     │  └─ ic_launcher.png
-│  │     │     ├─ values
-│  │     │     │  └─ styles.xml
-│  │     │     └─ values-night
-│  │     │        └─ styles.xml
-│  │     └─ profile
-│  │        └─ AndroidManifest.xml
-│  ├─ build.gradle.kts
-│  ├─ gradle
-│  │  └─ wrapper
-│  │     ├─ gradle-wrapper.jar
-│  │     └─ gradle-wrapper.properties
-│  ├─ gradle.properties
-│  ├─ gradlew
-│  ├─ gradlew.bat
-│  ├─ local.properties
-│  └─ settings.gradle.kts
-├─ assets
-│  └─ fonts
-│     ├─ ClashGrotesk-Bold.otf
-│     ├─ ClashGrotesk-Extralight.otf
-│     ├─ ClashGrotesk-Light.otf
-│     ├─ ClashGrotesk-Medium.otf
-│     ├─ ClashGrotesk-Regular.otf
-│     ├─ ClashGrotesk-Semibold.otf
-│     └─ ClashGrotesk-Variable.ttf
-├─ ios
-│  ├─ Flutter
-│  │  ├─ AppFrameworkInfo.plist
-│  │  ├─ Debug.xcconfig
-│  │  ├─ Generated.xcconfig
-│  │  ├─ Release.xcconfig
-│  │  ├─ ephemeral
-│  │  │  ├─ flutter_lldb_helper.py
-│  │  │  └─ flutter_lldbinit
-│  │  └─ flutter_export_environment.sh
-│  ├─ Podfile
-│  ├─ Runner
-│  │  ├─ AppDelegate.swift
-│  │  ├─ Assets.xcassets
-│  │  │  ├─ AppIcon.appiconset
-│  │  │  │  ├─ Contents.json
-│  │  │  │  ├─ Icon-App-1024x1024@1x.png
-│  │  │  │  ├─ Icon-App-20x20@1x.png
-│  │  │  │  ├─ Icon-App-20x20@2x.png
-│  │  │  │  ├─ Icon-App-20x20@3x.png
-│  │  │  │  ├─ Icon-App-29x29@1x.png
-│  │  │  │  ├─ Icon-App-29x29@2x.png
-│  │  │  │  ├─ Icon-App-29x29@3x.png
-│  │  │  │  ├─ Icon-App-40x40@1x.png
-│  │  │  │  ├─ Icon-App-40x40@2x.png
-│  │  │  │  ├─ Icon-App-40x40@3x.png
-│  │  │  │  ├─ Icon-App-60x60@2x.png
-│  │  │  │  ├─ Icon-App-60x60@3x.png
-│  │  │  │  ├─ Icon-App-76x76@1x.png
-│  │  │  │  ├─ Icon-App-76x76@2x.png
-│  │  │  │  └─ Icon-App-83.5x83.5@2x.png
-│  │  │  └─ LaunchImage.imageset
-│  │  │     ├─ Contents.json
-│  │  │     ├─ LaunchImage.png
-│  │  │     ├─ LaunchImage@2x.png
-│  │  │     ├─ LaunchImage@3x.png
-│  │  │     └─ README.md
-│  │  ├─ Base.lproj
-│  │  │  ├─ LaunchScreen.storyboard
-│  │  │  └─ Main.storyboard
-│  │  ├─ GeneratedPluginRegistrant.h
-│  │  ├─ GeneratedPluginRegistrant.m
-│  │  ├─ Info.plist
-│  │  └─ Runner-Bridging-Header.h
-│  ├─ Runner.xcodeproj
-│  │  ├─ project.pbxproj
-│  │  ├─ project.xcworkspace
-│  │  │  ├─ contents.xcworkspacedata
-│  │  │  └─ xcshareddata
-│  │  │     ├─ IDEWorkspaceChecks.plist
-│  │  │     ├─ WorkspaceSettings.xcsettings
-│  │  │     └─ swiftpm
-│  │  │        └─ configuration
-│  │  └─ xcshareddata
-│  │     └─ xcschemes
-│  │        └─ Runner.xcscheme
-│  ├─ Runner.xcworkspace
-│  │  ├─ contents.xcworkspacedata
-│  │  └─ xcshareddata
-│  │     ├─ IDEWorkspaceChecks.plist
-│  │     ├─ WorkspaceSettings.xcsettings
-│  │     └─ swiftpm
-│  │        └─ configuration
-│  └─ RunnerTests
-│     └─ RunnerTests.swift
-├─ lib
-│  ├─ core
-│  │  ├─ data
-│  │  │  ├─ amiibo_dto.dart
-│  │  │  ├─ http_amiibo_repository.dart
-│  │  │  └─ network
-│  │  │     └─ amiibo_remote_data_source.dart
-│  │  └─ domain
-│  │     ├─ amiibo.dart
-│  │     └─ amiibo_repository.dart
-│  ├─ details
-│  │  └─ presentation
-│  │     ├─ bloc
-│  │     └─ view
-│  │        ├─ screens
-│  │        │  └─ details_screen.dart
-│  │        └─ widgets
-│  ├─ main.dart
-│  └─ search
-│     └─ presentation
-│        ├─ bloc
-│        │  ├─ search_bloc.dart
-│        │  ├─ search_event.dart
-│        │  └─ search_state.dart
-│        └─ view
-│           ├─ screens
-│           │  └─ search_screen.dart
-│           └─ widgets
-├─ linux
-│  ├─ CMakeLists.txt
-│  ├─ flutter
-│  │  ├─ CMakeLists.txt
-│  │  ├─ ephemeral
-│  │  │  └─ .plugin_symlinks
-│  │  ├─ generated_plugin_registrant.cc
-│  │  ├─ generated_plugin_registrant.h
-│  │  └─ generated_plugins.cmake
-│  └─ runner
-│     ├─ CMakeLists.txt
-│     ├─ main.cc
-│     ├─ my_application.cc
-│     └─ my_application.h
-├─ macos
-│  ├─ Flutter
-│  │  ├─ Flutter-Debug.xcconfig
-│  │  ├─ Flutter-Release.xcconfig
-│  │  ├─ GeneratedPluginRegistrant.swift
-│  │  └─ ephemeral
-│  │     ├─ Flutter-Generated.xcconfig
-│  │     └─ flutter_export_environment.sh
-│  ├─ Podfile
-│  ├─ Runner
-│  │  ├─ AppDelegate.swift
-│  │  ├─ Assets.xcassets
-│  │  │  └─ AppIcon.appiconset
-│  │  │     ├─ Contents.json
-│  │  │     ├─ app_icon_1024.png
-│  │  │     ├─ app_icon_128.png
-│  │  │     ├─ app_icon_16.png
-│  │  │     ├─ app_icon_256.png
-│  │  │     ├─ app_icon_32.png
-│  │  │     ├─ app_icon_512.png
-│  │  │     └─ app_icon_64.png
-│  │  ├─ Base.lproj
-│  │  │  └─ MainMenu.xib
-│  │  ├─ Configs
-│  │  │  ├─ AppInfo.xcconfig
-│  │  │  ├─ Debug.xcconfig
-│  │  │  ├─ Release.xcconfig
-│  │  │  └─ Warnings.xcconfig
-│  │  ├─ DebugProfile.entitlements
-│  │  ├─ Info.plist
-│  │  ├─ MainFlutterWindow.swift
-│  │  └─ Release.entitlements
-│  ├─ Runner.xcodeproj
-│  │  ├─ project.pbxproj
-│  │  ├─ project.xcworkspace
-│  │  │  └─ xcshareddata
-│  │  │     └─ IDEWorkspaceChecks.plist
-│  │  └─ xcshareddata
-│  │     └─ xcschemes
-│  │        └─ Runner.xcscheme
-│  ├─ Runner.xcworkspace
-│  │  ├─ contents.xcworkspacedata
-│  │  └─ xcshareddata
-│  │     └─ IDEWorkspaceChecks.plist
-│  └─ RunnerTests
-│     └─ RunnerTests.swift
-├─ pubspec.yaml
-├─ test
-│  └─ widget_test.dart
-├─ web
-│  ├─ favicon.png
-│  ├─ icons
-│  │  ├─ Icon-192.png
-│  │  ├─ Icon-512.png
-│  │  ├─ Icon-maskable-192.png
-│  │  └─ Icon-maskable-512.png
-│  ├─ index.html
-│  └─ manifest.json
-└─ windows
-   ├─ CMakeLists.txt
-   ├─ flutter
-   │  ├─ CMakeLists.txt
-   │  ├─ ephemeral
-   │  │  └─ .plugin_symlinks
-   │  ├─ generated_plugin_registrant.cc
-   │  ├─ generated_plugin_registrant.h
-   │  └─ generated_plugins.cmake
-   └─ runner
-      ├─ CMakeLists.txt
-      ├─ Runner.rc
-      ├─ flutter_window.cpp
-      ├─ flutter_window.h
-      ├─ main.cpp
-      ├─ resource.h
-      ├─ resources
-      │  └─ app_icon.ico
-      ├─ runner.exe.manifest
-      ├─ utils.cpp
-      ├─ utils.h
-      ├─ win32_window.cpp
-      └─ win32_window.h
+### 2. Clone the Repository
 
-```
+git clone https://github.com/mcntcw/amiibo_explorer_app.git
+cd amiibo_explorer_app
+
+### 3. Install Dependencies
+
+Install all project dependencies defined in pubspec.yaml:
+
+### 4. Run the Application
+
+Use one of the following commands depending on your target platform:
+
+**Android / iOS**
+flutter run
+
+### 5. Run Tests
+
+This project uses bloc_test and mocktail for testing.
+
+To execute the test suite:
+flutter test
+
+---
+
+## Dependencies
+
+Key libraries used in the project:
+
+- flutter_bloc - State management using BLoC pattern  
+- dio - For HTTP requests  
+- equatable - Simplified equality comparison in models and states  
+- get - Simple navigation and dependency management  
+- flutter_animate - Smooth and declarative animations  

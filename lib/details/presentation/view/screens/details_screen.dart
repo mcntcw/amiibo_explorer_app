@@ -3,9 +3,13 @@ import 'package:get/get.dart';
 import 'package:amiibo_explorer_app/core/domain/amiibo.dart';
 
 class AmiiboDetailsScreen extends StatelessWidget {
-  final Amiibo amiibo = Get.arguments as Amiibo;
+  // Allow passing an Amiibo directly (useful for tests). If not provided,
+  // fall back to reading from Get.arguments.
+  final Amiibo? amiibo;
 
-  AmiiboDetailsScreen({super.key});
+  const AmiiboDetailsScreen({super.key, this.amiibo});
+
+  Amiibo get _amiibo => amiibo ?? Get.arguments as Amiibo;
 
   @override
   Widget build(BuildContext context) {
@@ -17,14 +21,14 @@ class AmiiboDetailsScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _HeaderImageAndBack(amiibo: amiibo),
-            _AmiiboDescription(amiibo: amiibo),
+            _HeaderImageAndBack(amiibo: _amiibo),
+            _AmiiboDescription(amiibo: _amiibo),
           ],
         ),
       ),
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 18.0, vertical: 36.0),
-        child: _BottomInfoTile(head: amiibo.head, tail: amiibo.tail),
+        child: _BottomInfoTile(head: _amiibo.head, tail: _amiibo.tail),
       ),
     );
   }
@@ -173,17 +177,22 @@ class _BottomInfoTile extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           Text(
-            'Head: $head',
+            head,
             style: TextStyle(
               color: scheme.onSurface,
               fontWeight: FontWeight.bold,
             ),
           ),
+          Icon(
+            Icons.merge_rounded,
+            color: scheme.onSurface.withAlpha(220),
+            size: 22,
+          ),
           Text(
-            'Tail: $tail',
+            tail,
             style: TextStyle(
               color: scheme.onSurface,
               fontWeight: FontWeight.bold,

@@ -78,7 +78,7 @@ void main() {
 
       // Assert
       expect(domain, isA<Amiibo>());
-      expect(domain.releaseDate, '2014-12-06'); // jp preferred
+      expect(domain.releaseDate, '2014-12-06');
       expect(domain.name, 'Mario');
       expect(domain.type, 'Figure');
     });
@@ -116,7 +116,7 @@ void main() {
 
       final domain = dto.toDomain();
 
-      expect(domain.releaseDate, isNull); // jp not present
+      expect(domain.releaseDate, isNull);
     });
   });
 
