@@ -62,7 +62,6 @@ class _SearchScreenState extends State<SearchScreen> {
                     _ResultsList(
                       results: state.results,
                       onTap: (amiibo) {
-                        // Navigate to details screen with GetX and pass the model
                         Get.toNamed('/amiibo-details', arguments: amiibo);
                       },
                     ),
@@ -142,9 +141,9 @@ class _SearchBar extends StatelessWidget {
                   size: 18,
                 ),
                 contentPadding: const EdgeInsets.all(16),
-                hintText: "What Amiibo are you looking for?",
+                hintText: "Type at least 3 characters to search Amiibo...",
                 hintStyle: TextStyle(
-                  fontSize: 14,
+                  fontSize: 13,
                   color: scheme.onSurface.withAlpha(100),
                   fontWeight: FontWeight.w400,
                 ),
@@ -161,21 +160,24 @@ class _SearchBar extends StatelessWidget {
           ValueListenableBuilder<TextEditingValue>(
             valueListenable: listenable,
             builder: (context, value, _) {
-              final isEmpty = value.text.trim().isEmpty;
+              final text = value.text.trim();
+              final isValid = text.length >= 3;
+
               return GestureDetector(
-                onTap: onSearch,
+                onTap: isValid ? onSearch : null,
                 child: Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-
-                    color: isEmpty
-                        ? scheme.onSurface.withAlpha(120)
-                        : scheme.onSurface,
+                    color: isValid
+                        ? scheme.onSurface
+                        : scheme.onSurface.withAlpha(100),
                   ),
                   child: Icon(
                     Icons.arrow_upward_rounded,
-                    color: scheme.primary,
+                    color: isValid
+                        ? scheme.primary
+                        : scheme.onSurface.withAlpha(100),
                     size: 16,
                   ),
                 ),
@@ -316,7 +318,7 @@ class _ResultsList extends StatelessWidget {
             final amiibo = results[index];
             return _AmiiboCard(
               amiibo: amiibo,
-              onTap: () => onTap?.call(amiibo), // pass the tapped item
+              onTap: () => onTap?.call(amiibo),
             );
           },
         ),

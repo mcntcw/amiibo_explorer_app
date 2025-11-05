@@ -4,9 +4,8 @@ import 'package:amiibo_explorer_app/core/domain/amiibo_repository.dart';
 import 'package:dio/dio.dart';
 import 'package:amiibo_explorer_app/core/domain/amiibo.dart';
 
-/// Remote data source backed by AmiiboAPI.
-/// - Search uses /api/amiibo/?name={query}
-/// - Get-by-id uses /api/amiibo/?id={head}{tail}
+/// Remote data source backed by AmiiboAPI
+/// Search uses /api/amiibo/?name={query}
 class AmiiboRemoteDataSource implements AmiiboRepository {
   final Dio _dio;
   // ignore: unused_field
@@ -20,10 +19,8 @@ class AmiiboRemoteDataSource implements AmiiboRepository {
 
   @override
   Future<List<Amiibo>> search({String? query}) async {
-    // Build query parameters; AmiiboAPI supports filtering by 'name'
     final params = <String, dynamic>{};
     if (query != null && query.isNotEmpty) {
-      // AmiiboAPI performs a contains-like filter on 'name'
       params['name'] = query;
     }
 

@@ -1,6 +1,7 @@
 import 'package:amiibo_explorer_app/core/domain/amiibo.dart';
 import 'package:amiibo_explorer_app/core/domain/amiibo_repository.dart';
 import 'package:bloc/bloc.dart';
+import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 
 part 'search_event.dart';
@@ -43,7 +44,6 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
   }
 
   void _onSearchCleared(SearchCleared event, Emitter<SearchState> emit) {
-    // Reset to initial; useful for "Back to search" action
     emit(SearchInitial());
   }
 }

@@ -1,4 +1,6 @@
-class Amiibo {
+import 'package:equatable/equatable.dart';
+
+class Amiibo extends Equatable {
   final String amiiboSeries;
   final String character;
   final String gameSeries;
@@ -9,7 +11,7 @@ class Amiibo {
   final String type;
   final String? releaseDate;
 
-  Amiibo({
+  const Amiibo({
     required this.amiiboSeries,
     required this.character,
     required this.gameSeries,
@@ -20,4 +22,17 @@ class Amiibo {
     required this.type,
     required this.releaseDate,
   });
+
+  @override
+  List<Object?> get props => [
+    amiiboSeries,
+    character,
+    gameSeries,
+    head,
+    image,
+    name,
+    tail,
+    type,
+    releaseDate,
+  ];
 }
