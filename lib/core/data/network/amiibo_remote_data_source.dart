@@ -35,28 +35,4 @@ class AmiiboRemoteDataSource implements AmiiboRepository {
     final listDto = AmiiboListResponseDto.fromJson(map);
     return listDto.toDomainList();
   }
-
-  @override
-  Future<Amiibo?> getById(String id) {
-    // TODO: implement getById
-    throw UnimplementedError();
-  }
-
-  // @override
-  // Future<Amiibo?> getById(String id) async {
-  //   // Fetch a single record using id=head+tail as per docs
-  //   final res = await _dio.get('/api/amiibo/', queryParameters: {'id': id});
-
-  //   final data = res.data is String ? jsonDecode(res.data as String) : res.data;
-  //   final map = data as Map<String, dynamic>;
-  //   final amiiboNode = map['amiibo'];
-
-  //   if (amiiboNode == null) return null;
-
-  //   if (amiiboNode is Map<String, dynamic>) {
-  //     // Single object shape
-  //     return AmiiboDto.fromJson(amiiboNode).toDomain();
-  //   }
-  //   return null;
-  // }
 }

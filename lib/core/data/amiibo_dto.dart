@@ -7,7 +7,7 @@ class AmiiboDto {
   final String head;
   final String image;
   final String name;
-  final Map<String, dynamic>? release; // {au, eu, jp, na} or null
+  final Map<String, dynamic>? release;
   final String tail;
   final String type;
 
@@ -38,7 +38,6 @@ class AmiiboDto {
   }
 
   Amiibo toDomain() {
-    // Extract only Japanese release date; keep null if absent
     final String? jp = release != null ? release!['jp'] as String? : null;
     return Amiibo(
       amiiboSeries: amiiboSeries,

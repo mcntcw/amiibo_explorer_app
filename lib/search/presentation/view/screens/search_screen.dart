@@ -1,7 +1,10 @@
 import 'package:amiibo_explorer_app/core/domain/amiibo.dart';
 import 'package:amiibo_explorer_app/search/presentation/bloc/search_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get/get.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -15,11 +18,12 @@ class _SearchScreenState extends State<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
+      backgroundColor: scheme.surface,
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(22.0),
+          padding: const EdgeInsets.all(24.0),
           child: BlocBuilder<SearchBloc, SearchState>(
             builder: (context, state) {
               if (state is SearchInitial) {
@@ -27,9 +31,9 @@ class _SearchScreenState extends State<SearchScreen> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      LogoText(),
+                      _LogoText(),
                       const SizedBox(height: 24),
-                      SearchBar(
+                      _SearchBar(
                         controller: _controller,
                         autofocus: true,
                         onSearch: () {
@@ -46,25 +50,33 @@ class _SearchScreenState extends State<SearchScreen> {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    ResultsHeader(
+                    _ResultsHeader(
                       query: state.query,
+                      count: state.results.length,
                       onRefresh: () {
                         context.read<SearchBloc>().add(SearchCleared());
                         _controller.clear();
                       },
                     ),
                     SizedBox(height: 12),
-                    ResultsList(results: state.results),
+                    _ResultsList(
+                      results: state.results,
+                      onTap: (amiibo) {
+                        // Navigate to details screen with GetX and pass the model
+                        Get.toNamed('/amiibo-details', arguments: amiibo);
+                      },
+                    ),
                   ],
                 );
               } else if (state is SearchLoading) {
                 return Center(
-                  child: CircularProgressIndicator(
-                    color: Theme.of(context).colorScheme.onSurface,
+                  child: LoadingAnimationWidget.stretchedDots(
+                    color: scheme.onSurface,
+                    size: 20,
                   ),
                 );
               } else if (state is SearchEmpty) {
-                return StatusMessage(
+                return _StatusMessage(
                   isFailure: false,
                   onReset: () {
                     context.read<SearchBloc>().add(SearchCleared());
@@ -72,7 +84,7 @@ class _SearchScreenState extends State<SearchScreen> {
                   },
                 );
               } else if (state is SearchFailure) {
-                return StatusMessage(
+                return _StatusMessage(
                   isFailure: true,
                   onReset: () {
                     context.read<SearchBloc>().add(SearchCleared());
@@ -89,86 +101,95 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 }
 
-class SearchBar extends StatelessWidget {
+class _SearchBar extends StatelessWidget {
   final TextEditingController? controller;
-  final String hintText;
   final VoidCallback? onSearch;
-  final FocusNode? focusNode;
+
   final bool autofocus;
 
-  const SearchBar({
-    super.key,
-    this.controller,
-    this.hintText = "What Amiibo are you looking for?",
-    this.onSearch,
-    this.focusNode,
-    this.autofocus = false,
-  });
+  const _SearchBar({this.controller, this.onSearch, this.autofocus = false});
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final scheme = Theme.of(context).colorScheme;
+    final listenable = controller ?? TextEditingController();
 
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Expanded(
-          child: TextField(
-            controller: controller,
-            focusNode: focusNode,
-            autofocus: autofocus,
-            textInputAction: TextInputAction.search,
-            style: TextStyle(
-              color: colorScheme.onSurface,
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-            ),
-            decoration: InputDecoration(
-              prefixIcon: Icon(
-                Icons.search,
-                color: colorScheme.onSurface,
-                size: 18,
-              ),
-              contentPadding: const EdgeInsets.all(16),
-              hintText: hintText,
-              hintStyle: TextStyle(
-                fontSize: 14,
-                color: colorScheme.onSurface.withAlpha(100),
-                fontWeight: FontWeight.w400,
-              ),
-              filled: true,
-              fillColor: colorScheme.primary,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(30),
-                borderSide: BorderSide.none,
-              ),
-            ),
-          ),
-        ),
-        const SizedBox(width: 12),
-        GestureDetector(
-          onTap: onSearch, // trigger BLoC action via callback
-          child: Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: colorScheme.onSurface,
-            ),
-            child: Icon(
-              Icons.arrow_upward_rounded,
-              color: colorScheme.primary,
-              size: 16,
-            ),
-          ),
-        ),
+    return Animate(
+      effects: [
+        FadeEffect(duration: 500.ms),
+        ScaleEffect(duration: 500.ms, curve: Curves.easeOutBack),
       ],
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Expanded(
+            child: TextField(
+              controller: controller,
+              onSubmitted: onSearch != null ? (_) => onSearch!() : null,
+              focusNode: FocusNode(),
+              autofocus: autofocus,
+              textInputAction: TextInputAction.search,
+              style: TextStyle(
+                color: scheme.onSurface,
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+              ),
+              decoration: InputDecoration(
+                prefixIcon: Icon(
+                  Icons.search,
+                  color: scheme.onSurface,
+                  size: 18,
+                ),
+                contentPadding: const EdgeInsets.all(16),
+                hintText: "What Amiibo are you looking for?",
+                hintStyle: TextStyle(
+                  fontSize: 14,
+                  color: scheme.onSurface.withAlpha(100),
+                  fontWeight: FontWeight.w400,
+                ),
+                filled: true,
+                fillColor: scheme.primary,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30),
+                  borderSide: BorderSide.none,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
+          ValueListenableBuilder<TextEditingValue>(
+            valueListenable: listenable,
+            builder: (context, value, _) {
+              final isEmpty = value.text.trim().isEmpty;
+              return GestureDetector(
+                onTap: onSearch,
+                child: Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+
+                    color: isEmpty
+                        ? scheme.onSurface.withAlpha(120)
+                        : scheme.onSurface,
+                  ),
+                  child: Icon(
+                    Icons.arrow_upward_rounded,
+                    color: scheme.primary,
+                    size: 16,
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
     );
   }
 }
 
-class LogoText extends StatelessWidget {
-  const LogoText({super.key});
+class _LogoText extends StatelessWidget {
+  const _LogoText();
 
   @override
   Widget build(BuildContext context) {
@@ -179,60 +200,71 @@ class LogoText extends StatelessWidget {
         fontWeight: FontWeight.w600,
         color: Theme.of(context).colorScheme.onSurface,
       ),
-    );
+    ).animate(effects: [FadeEffect(duration: 1000.ms)]);
   }
 }
 
-class StatusMessage extends StatelessWidget {
+class _StatusMessage extends StatelessWidget {
   final bool isFailure;
   final VoidCallback? onReset;
 
-  const StatusMessage({super.key, required this.isFailure, this.onReset});
+  const _StatusMessage({required this.isFailure, required this.onReset});
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
+    final scheme = Theme.of(context).colorScheme;
 
     final text = isFailure ? "Something went wrong" : "No results found";
 
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            text,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w400,
-              color: scheme.onSurface.withAlpha(120),
-            ),
-          ),
-          const SizedBox(height: 16),
-          if (onReset != null)
-            GestureDetector(
-              onTap: onReset,
-              child: Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: scheme.onSurface,
-                ),
-                child: Icon(Icons.refresh, color: scheme.primary, size: 16),
+    return Animate(
+      effects: [FadeEffect(duration: 300.ms)],
+      child: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              text,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w400,
+                color: scheme.onSurface.withAlpha(120),
               ),
             ),
-        ],
+            const SizedBox(height: 16),
+            if (onReset != null)
+              GestureDetector(
+                onTap: onReset,
+                child: Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: scheme.onSurface,
+                  ),
+                  child: Icon(
+                    Icons.arrow_back_rounded,
+                    color: scheme.primary,
+                    size: 16,
+                  ),
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }
 }
 
-class ResultsHeader extends StatelessWidget {
+class _ResultsHeader extends StatelessWidget {
   final String query;
+  final int count;
   final VoidCallback? onRefresh;
 
-  const ResultsHeader({super.key, required this.query, this.onRefresh});
+  const _ResultsHeader({
+    required this.query,
+    required this.count,
+    required this.onRefresh,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -243,30 +275,23 @@ class ResultsHeader extends StatelessWidget {
       children: [
         Expanded(
           child: Text(
-            'Results for "$query"',
+            '$count results for "$query"',
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             textAlign: TextAlign.left,
             style: TextStyle(
               fontSize: 24,
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w600,
               color: scheme.onSurface.withAlpha(200),
             ),
           ),
         ),
         GestureDetector(
           onTap: onRefresh,
-          child: Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: scheme.onSurface,
-            ),
-            child: Icon(
-              Icons.arrow_back_ios_new_outlined,
-              color: scheme.primary,
-              size: 12,
-            ),
+          child: Icon(
+            Icons.keyboard_arrow_left,
+            color: scheme.onSurface.withAlpha(220),
+            size: 40,
           ),
         ),
       ],
@@ -274,29 +299,37 @@ class ResultsHeader extends StatelessWidget {
   }
 }
 
-class ResultsList extends StatelessWidget {
+class _ResultsList extends StatelessWidget {
   final List<Amiibo> results;
+  final void Function(Amiibo)? onTap;
 
-  const ResultsList({super.key, required this.results});
+  const _ResultsList({required this.results, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: ListView.builder(
-        itemCount: results.length,
-        itemBuilder: (BuildContext context, int index) {
-          return AmiiboCard(amiibo: results[index]);
-        },
+    return Animate(
+      effects: [FadeEffect(duration: 500.ms)],
+      child: Expanded(
+        child: ListView.builder(
+          itemCount: results.length,
+          itemBuilder: (BuildContext context, int index) {
+            final amiibo = results[index];
+            return _AmiiboCard(
+              amiibo: amiibo,
+              onTap: () => onTap?.call(amiibo), // pass the tapped item
+            );
+          },
+        ),
       ),
     );
   }
 }
 
-class AmiiboCard extends StatelessWidget {
+class _AmiiboCard extends StatelessWidget {
   final Amiibo amiibo;
   final VoidCallback? onTap;
 
-  const AmiiboCard({super.key, required this.amiibo, this.onTap});
+  const _AmiiboCard({required this.amiibo, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -304,8 +337,7 @@ class AmiiboCard extends StatelessWidget {
 
     return Card(
       elevation: 0,
-      color: scheme.surface,
-      surfaceTintColor: scheme.surfaceTint,
+      color: scheme.primary,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
@@ -319,11 +351,9 @@ class AmiiboCard extends StatelessWidget {
                 width: 50,
                 height: 50,
                 decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: scheme.surface,
                   image: DecorationImage(
                     image: NetworkImage(amiibo.image) as ImageProvider<Object>,
-                    fit: BoxFit.cover,
+                    fit: BoxFit.contain,
                   ),
                 ),
               ),
@@ -373,7 +403,7 @@ class _Details extends StatelessWidget {
           overflow: TextOverflow.ellipsis,
           style: TextStyle(
             fontSize: 16,
-            fontWeight: FontWeight.w700,
+            fontWeight: FontWeight.w600,
             color: scheme.onSurface,
           ),
         ),
@@ -383,16 +413,18 @@ class _Details extends StatelessWidget {
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: TextStyle(
+            fontWeight: FontWeight.w500,
             fontSize: 13,
-            color: scheme.onSurface.withAlpha(180),
+            color: scheme.onSurface.withAlpha(220),
           ),
         ),
         if (releaseDate != null && releaseDate!.isNotEmpty) ...[
           const SizedBox(height: 4),
           Text(
-            'Release: $releaseDate',
+            releaseDate!,
             style: TextStyle(
               fontSize: 12,
+              fontWeight: FontWeight.bold,
               color: scheme.onSurface.withAlpha(180),
             ),
           ),
